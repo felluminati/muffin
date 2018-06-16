@@ -1,0 +1,19 @@
+{
+  "manifest_version": 2,
+  "name": "Muffin - Github Issues",
+  "version": "0.1",
+  "content_scripts": [
+    {
+      "matches": [
+        "https://api.github.com/repos/*/*/issues?state=all"
+      ],
+      "js": ["content.js"]
+    }
+  ],
+  "icons": {
+    "16": "images/muffin16.png",
+    "32": "images/muffin32.png",
+    "48": "images/muffin48.png",
+    "128": "images/muffin128.png"
+  }
+}
