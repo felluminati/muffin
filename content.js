@@ -11,27 +11,16 @@ const parsedUrl = window.location.href.split('/');
 const orgOrUser = parsedUrl[4];
 const repoName = parsedUrl[5];
 const fullRepoName = `${orgOrUser}_${repoName}`;
+let repos = {};
 
-/* Get issues from storage */
+/* Get issues from storage, merge with JSON and save to local storage */
 
-chrome.storage.sync.get(['repos'], function(data) {
-  console.log('data: ', data);
-  if (!data.repos) {
-    data.repos = { [fullRepoName]: [...newIssues] };
-    console.log('no repos');
-  } else if (!data.repos[fullRepoName]) {
-    data.repos[fullRepoName] = [...newIssues];
-    console.log('not in repos');
-  } else {
-    data.repos[fullRepoName] = mergeIssues(newIssues, data.repos[fullRepoName]);
-    console.log('update repo');
-  }
-  chrome.storage.sync.set({ repos: {}}, function() {
-    console.log('repos saved', data);
-    updateContent(data.repos[fullRepoName]);
-  });
+const storedIssues = JSON.parse(localStorage.getItem(fullRepoName)) || []
+const mergedIssues = mergeIssues(newIssues, storedIssues);
+localStorage.setItem(fullRepoName, JSON.stringify(mergedIssues));
 
-})
+/* Update page contents*/
+updateContent(mergedIssues);
 
 /* 
   Merge two arrays of issues. If an id from the new array matches the id from
@@ -69,29 +58,29 @@ function updateContent(issues) {
     <h1><a href="https://github.com/${orgOrUser}/${repoName}" target="_blank">${orgOrUser} / ${repoName}</a></h1>
     <hr />
     <h2>Closed Issues - (${closedIssues.length})</h2>
-    <ol>
+    <ul style="list-style-type:none;">
       ${renderIssues(closedIssues)}
-    </ol>
+    </ul>
     <hr />
     <h2>In Progress Issues - (${inProgressIssues.length})</h2>
-    <ol>
+    <ul style="list-style-type:none;">
       ${renderIssues(inProgressIssues)}
-    </ol>
+    </ul>
     <hr />
     <h2>Open Issues - (${openIssues.length})</h2>
-    <ol>
+    <ul style="list-style-type:none;">
       ${renderIssues(openIssues)}
-    </ol>
+    </ul>
     <hr />
     <h2>Open Pull Requests - (${openPullRequests.length})</h2>
-    <ol>
+    <ul style="list-style-type:none;">
       ${renderIssues(openPullRequests)}
-    </ol>
+    </ul>
     <hr />
     <h2>Closed Pull Requests - (${closedPullRequests.length})</h2>
-    <ol>
+    <ul style="list-style-type:none;">
       ${renderIssues(closedPullRequests)}
-    </ol>
+    </ul>
     <hr />
     <footer>
       This may not be a complete list of issues related to this repo. 
@@ -112,6 +101,7 @@ function renderIssues(issues) {
   return issues.map(issue => (
     `
     <li>
+      #${issue.number} -&nbsp
       <a href="https://github.com/${orgOrUser}/${repoName}/issues/${issue.number}" target="_blank">
         ${issue.title}
       </a>
