@@ -8,7 +8,7 @@
   "content_scripts": [
     {
       "matches": [
-        "https://api.github.com/repos/*/*/issues?state=all"
+        "https://api.github.com/repos/*/*/issues?state=*"
       ],
       "js": ["content.js"]
     }
