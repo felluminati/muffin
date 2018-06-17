@@ -3,7 +3,7 @@
   "name": "Muffin - Github Issues",
   "version": "0.1",
   "permissions": [
-    "tabs", "activeTab"
+    "tabs", "activeTab", "storage"
   ],
   "content_scripts": [
     {
@@ -15,7 +15,8 @@
   ],
   "browser_action": {
     "default_title": "Muffin",
-    "default_popup": "popup.html"
+    "default_popup": "popup.html",
+    "default_icon": "images/muffin128.png"
   },
   "icons": {
     "16": "images/muffin16.png",
