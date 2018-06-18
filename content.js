@@ -99,10 +99,17 @@ function updateContent(issues) {
   body.appendChild(container);
 
   document.getElementById('copy-issues').addEventListener('click', function(event) {
+    // to add visual cue for click - see margin
+    event.target.setAttribute("style", "border: 1px solid black;margin: 10px 6px 6px 10px;font-size: 18px;white-space: nowrap;font-weight: bold;border-radius: 6px;outline: none;padding: 6px 15px;")
     event.preventDefault();
     const copyText = document.getElementById('all-issues');
     copyText.select();
     document.execCommand('copy');
+
+    // restores original css
+    setTimeout(function() {
+      event.target.setAttribute("style", "border: 1px solid black;margin: 8px;font-size: 18px;white-space: nowrap;font-weight: bold;border-radius: 6px;outline: none;padding: 6px 15px;")
+    }, 200);
   })
 }
 
@@ -134,7 +141,6 @@ function prepareForCopy(issues) {
       `${issue.number}\t` +
       `${issue.title}\t` + 
       `${issue.state}\t` +
-      // `${!!issue.labels && issue.labels.find(label => label.name === 'in progress') ? 'in progress' : ''}\t` +
       `${!!issue.labels && issue.labels.map(label => label.name).join(',')}\t` +
       `${toDate(issue.created_at)}\t` +
       `${toDate(issue.updated_at)}\t` +
